@@ -1,0 +1,45 @@
+---
+title: "Stats Programming Challenge"
+author: "C. elegans"
+date: "9/11/2023"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+opts_chunk$set(tidy.opts=list(width.cutoff=50),tidy=TRUE)
+```
+
+
+We first load the data and create subsets for the USA and China.
+```{r}
+data <- read.csv("https://covid.ourworldindata.org/data/owid-covid-data.csv",
+     na.strings = "",header=T)
+data1 <-data[which((data$location=="United States")),]
+data2 <-data[which((data$location=="China")),]
+```
+
+## USA results
+We apply linear regression with "new cases" as the predictor variable and "new vaccinations" as the predictor variable for USA data. 
+```{r}
+summary(lm(new_cases ~new_vaccinations, data = data1))
+```
+We see that new vaccinations do not yield a significant p-value, thus we fail to reject the null hypothesis that $\beta_{nv} = 0$. This indicates that new vaccinations are not correlated with new cases in the US.
+
+## China Results
+```{r}
+summary(lm(new_cases ~new_vaccinations, data = data2))
+```
+We see that new vaccinations yield a significant p-value, thus we reject the null hypothesis that $\beta_{nv} = 0$. This indicates that there is a non-zero correlation between new vaccinations and new cases in China.
+
+## Conclusion
+
+### Fake Explanation
+We conclude that new vaccinations are effective in China for stopping the spread of COVID-19, while they are not in the US. The negative coefficient for the China data indicates that new vaccinations and new cases are negatively correlated. In other words, the more vaccines the less new cases occur. We fail to reject the null hypothesis in the US, indicating no correlation between new vaccines and new cases. Our results show that vaccines work effectively in China but not in the US.
+
+### Critique of fake result
+In our analysis we use a linear model with one predictor variable. We obtain a very high RSE and low $R^2$ value, which indicates that our model is not a good model of the data. We fail to account for several factors as well when fitting the data. For example, there should be a lag to when we see the effect of vaccines but we compare the data within the same week. There are also nuances in vaccine usage (different vaccines were used and have different levels of effectiveness), but vaccines are captured as a single number and are considered equal. The nominal amount of vaccines does not also account for coverage, as in what percent of the population is vaccinated.
+
+
+
